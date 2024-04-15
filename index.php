@@ -1,9 +1,15 @@
 <?php
-if (file_exists("contacts.json")) {
-  $contacts = json_decode(file_get_contents("contacts.json"), $associative = true);
-} else {
-  $contacts = [];
-}
+require "database.php";
+
+// $contacts = json_decode(file_get_contents("contacts.json"), $associative = true);
+$contacts = $conn->query("SELECT * FROM contacts")->fetchAll();
+// foreach ($contacts as $key) {
+//  print_r($contacts);
+//  foreach ($contacts as $key) {
+//   echo ($key . PHP_EOL);
+//  }
+// }
+// die();
 // var_dump($contacts)
 ?>
 
@@ -57,15 +63,13 @@ if (file_exists("contacts.json")) {
 
 
 
-        <?php if ($contacts === NULL or (count($contacts) == 0)): ?>
+        <?php if (count($contacts) == 0): ?>
           <div class="col-mdm4 mx-auto">
-            <div class ="card card-body text-center">
+            <div class="card card-body text-center">
               <p>No contacts saved yet</p>
               <a href="add.php">Add one</a>
             </div>
           </div>
-
-
         <?php endif ?>
         <?php foreach ($contacts as $ct): ?>
 

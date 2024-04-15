@@ -1,23 +1,35 @@
 <pre>
 <?php
-if ($_SERVER['REQUEST_METHOD'] == "POST") {
-  # code...
-  $contacto = [
-      "name" => $_POST["name"],
-      "phone_number" => $_POST["phone_number"]
-  ];
- 
-if (file_exists("contacts.json")) {
-  $contacts = json_decode(file_get_contents("contacts.json"), true);
-  # code...
-}
-else{
-  $contacts = [];
-}
-  $contacts[] = $contacto;
-  file_put_contents("contacts.json", json_encode($contacts));
 
-  header("Location: index.php");
+require "database.php";
+$error = null;
+// $contacto = [
+// ];
+if ($_SERVER['REQUEST_METHOD'] == "POST") {
+  if (empty($_POST["name"] || $_POST["phone_number"])) {
+    $error = "Please fill all the fields";
+
+  } elseif (strlen($_POST["phone_number"] < 9) || strlen($_POST["name"] < 1)) {
+    $error = "Wrong phone number. It must be at least 9 characters";
+  } else {
+    $name = $_POST["name"];
+    $phoneNumber = $_POST["phone_number"];
+    $statement = $conn->prepare("INSERT INTO contacts (name, phone_number) VALUES (':name', ':phone_number')");
+    $statement->bindParam(":name", $name);
+    $statement->bindParam(":phone_number", $phoneNumber);
+    $statement->execute();
+    header("Location: index.php");
+  }
+  // if (file_exists("contacts.json")) {
+  //   $contacts = json_decode(file_get_contents("contacts.json"), true);
+  // } else {
+  //   $contacts = [];
+  // }
+  // $contacts[] = $contacto;
+  // file_put_contents("contacts.json", json_encode($contacts));
+
+
+
 }
 
 ?>
@@ -74,6 +86,11 @@ else{
         <div class="card">
           <div class="card-header">Add New Contact</div>
           <div class="card-body">
+            <?php if ($error != null): ?>
+              <p class="text-danger">
+                <?= $error ?>
+              </p>
+            <?php endif ?>
             <form method="POST" action="add.php">
               <div class="mb-3 row">
                 <label for="name" class="col-md-4 col-form-label text-md-end">Name</label>
