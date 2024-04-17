@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ejemplo de JavaScript con PHP</title>
+</head>
+<body>
+    <h2>Ejemplo de JavaScript con PHP</h2>
+    <button onclick="cargarDatos()">Haz clic para cargar datos</button>
+    <div id="resultado"></div>
+
+    <script>
+        function cargarDatos() {
+            // Crear un objeto XMLHttpRequest
+            var xhr = new XMLHttpRequest();
+
+            // Configurar la solicitud
+            xhr.open("GET", "ejemplo.php", true);
+
+            // Definir la función a ejecutar cuando la solicitud se complete
+            xhr.onload = function() {
+                if (xhr.status == 200) {
+                    // Actualizar el contenido del div con el id "resultado"
+                    document.getElementById("resultado").innerHTML = xhr.responseText;
+                }
+            };
+
+            // Enviar la solicitud
+            xhr.send();
+        }
+    </script>
+</body>
+</html>

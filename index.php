@@ -3,6 +3,8 @@ require "database.php";
 
 // $contacts = json_decode(file_get_contents("contacts.json"), $associative = true);
 $contacts = $conn->query("SELECT * FROM contacts")->fetchAll();
+
+// este ciclo se usa para mostar los datos extraidos cuando no se usa fetch y entonces es un objeto
 // foreach ($contacts as $key) {
 //  print_r($contacts);
 //  foreach ($contacts as $key) {
@@ -10,7 +12,9 @@ $contacts = $conn->query("SELECT * FROM contacts")->fetchAll();
 //  }
 // }
 // die();
-// var_dump($contacts)
+
+// Para print con fetch all que devuelve un array asociativo
+// print_r($contacts)
 ?>
 
 
@@ -31,6 +35,8 @@ $contacts = $conn->query("SELECT * FROM contacts")->fetchAll();
   <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
     integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
     crossorigin="anonymous"></script>
+
+    
   <title>App de contacto</title>
 </head>
 
@@ -61,7 +67,7 @@ $contacts = $conn->query("SELECT * FROM contacts")->fetchAll();
     <div class="container pt-4 p-3">
       <div class="row">
 
-
+      <!-- <?php if (isset($_GET["id"])) {echo("Contacto borrado");} ?> -->
 
         <?php if (count($contacts) == 0): ?>
           <div class="col-mdm4 mx-auto">
@@ -78,8 +84,8 @@ $contacts = $conn->query("SELECT * FROM contacts")->fetchAll();
               <div class="card-body">
                 <h3 class="card-title text-capitalize"><?= $ct['name']; ?></h3>
                 <p class="m-2"><?= $ct['phone_number'] ?></p>
-                <a href="#" class="btn btn-secondary mb-2">Edit Contact</a>
-                <a href="#" class="btn btn-danger mb-2">Delete Contact</a>
+                <a href="edit.php?id=<?= $ct["id"] ?>" class="btn btn-secondary mb-2">Edit Contact</a>
+                <a href="delete.php?id=<?= $ct["id"] ?>" class="btn btn-danger mb-2">Delete Contact</a>
               </div>
             </div>
           </div>
