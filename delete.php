@@ -17,4 +17,4 @@ $statement = $conn->prepare("DELETE FROM contacts WHERE id=:id");
 
 // Array asociativo en execute para pasar los parametros a la consulta
 $statement->execute([":id"=>$id]);
-header("Location: index.php?id=$id");
+header("Location: home.php?id=$id");
