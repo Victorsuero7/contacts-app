@@ -1,7 +1,16 @@
 
 <?php
-$error = null;
+
+session_name("ID_de_sesion");
+session_start();
+if (!isset($_SESSION["user"])) {
+  header("Location: login.php");
+  return;
+}
+
 require "database.php";
+$error = null;
+
 $id = $_GET["id"];
 
 $statement = $conn->prepare("SELECT * FROM contacts WHERE id=:id LIMIT 1");
@@ -38,7 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
     <div class="row justify-content-center">
       <div class="col-md-8">
         <div class="card">
-          <div class="card-header">Add New Contact</div>
+          <div class="card-header">Edit Contact</div>
           <div class="card-body">
             <?php if ($error != null): ?>
               <p class="text-danger">

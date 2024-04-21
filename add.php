@@ -2,6 +2,14 @@
 <?php
 
 require "database.php";
+
+session_name("ID_de_sesion");
+session_start();
+if (!isset($_SESSION["user"])) {
+  header("Location: login.php");
+  return;
+}
+
 $error = null;
 // $contacto = [
 // ];

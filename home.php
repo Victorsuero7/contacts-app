@@ -1,6 +1,14 @@
 <?php
 require "database.php";
+// var_dump($_COOKIE);
+session_name("ID_de_sesion");
+session_start();
+print_r($_SESSION);
 
+if (!isset($_SESSION["user"])) {
+  header("Location: login.php");
+  return;
+}
 // $contacts = json_decode(file_get_contents("contacts.json"), $associative = true);
 $contacts = $conn->query("SELECT * FROM contacts")->fetchAll();
 
