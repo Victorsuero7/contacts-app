@@ -1,4 +1,3 @@
-
 <?php
 
 session_name("ID_de_sesion");
@@ -13,28 +12,32 @@ $error = null;
 
 $id = $_GET["id"];
 
-$statement = $conn->prepare("SELECT * FROM contacts WHERE id=:id LIMIT 1");
-$statement->execute([":id"=>$id]);
-
+$statement = $conn->prepare("SELECT * FROM contacts WHERE id=:id AND user_id = {$_SESSION["user"]["id"]} LIMIT 1");
+$statement->execute([":id" => $id]);
 if ($statement->rowCount() == 0) {
   http_response_code(404);
-  echo("HTTP 404 NOT FOUND");
-}
-$contact = $statement->fetch(PDO::FETCH_ASSOC);
-if ($_SERVER['REQUEST_METHOD'] == "POST") {
-  if (empty($_POST["name"] || empty($_POST["phone_number"]))) {
-    $error = "Please fill all the fields";
+  echo ("HTTP 404 NOT FOUND");
+  die();
+} else {
+  $contact = $statement->fetch(PDO::FETCH_ASSOC);
+  if ($_SERVER['REQUEST_METHOD'] == "POST") {
+    if (empty($_POST["name"] || empty($_POST["phone_number"]))) {
+      $error = "Please fill all the fields";
 
-  } else if (strlen($_POST["phone_number"]) < 9 or strlen($_POST["name"]) < 1) {
-    $error = "Wrong phone number. It must be at least 9 characters";
-  } else {
-    $name = $_POST["name"];
-    $phoneNumber = $_POST["phone_number"];
-    $statement = $conn->prepare("UPDATE contacts SET name = :name, phone_number = :phone_number WHERE id = :id");
-    $statement->execute([":id"=>$id, ":name" => $_POST["name"], ":phone_number" => $_POST["phone_number"]]);
+    } else if (strlen($_POST["phone_number"]) < 9 or strlen($_POST["name"]) < 1) {
+      $error = "Wrong phone number. It must be at least 9 characters";
+    } else {
+      $name = $_POST["name"];
+      $phoneNumber = $_POST["phone_number"];
+      $statement = $conn->prepare("UPDATE contacts SET name = :name, phone_number = :phone_number WHERE id = :id AND user_id = {$_SESSION["user"]["id"]}");
+      $statement->execute([":id" => $id, ":name" => $_POST["name"], ":phone_number" => $_POST["phone_number"]]);
 
-
-    header("Location: home.php");
+      if ($statement->rowCount() == 0) {
+        echo ("HTTP 404 NOT FOUND");
+      } else {
+        header("Location: home.php");
+      }
+    }
   }
 }
 ?>
@@ -43,46 +46,48 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
 <?php require_once "partials/headers.php" ?>
 
 
-  <div class="container pt-5">
-    <div class="row justify-content-center">
-      <div class="col-md-8">
-        <div class="card">
-          <div class="card-header">Edit Contact</div>
-          <div class="card-body">
-            <?php if ($error != null): ?>
-              <p class="text-danger">
-                <?= $error ?>
-              </p>
-            <?php endif ?>
-            <form method="POST" action="edit.php?id=<?= $contact["id"] ?>">
-              <div class="mb-3 row">
-                <label for="name" class="col-md-4 col-form-label text-md-end">Name</label>
+<div class="container pt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <div class="card">
+        <div class="card-header">Edit Contact</div>
+        <div class="card-body">
+          <?php if ($error != null): ?>
+            <p class="text-danger">
+              <?= $error ?>
+            </p>
+          <?php endif ?>
+          <form method="POST" action="edit.php?id=<?= $contact["id"] ?>">
+            <div class="mb-3 row">
+              <label for="name" class="col-md-4 col-form-label text-md-end">Name</label>
 
-                <div class="col-md-6">
-                  <input value = "<?= $contact["name"] ?>" id="name" type="text" class="form-control" name="name" autocomplete="name" autofocus />
-                </div>
+              <div class="col-md-6">
+                <input value="<?= $contact["name"] ?>" id="name" type="text" class="form-control" name="name"
+                  autocomplete="name" autofocus />
               </div>
+            </div>
 
-              <div class="mb-3 row">
-                <label for="phone_number" class="col-md-4 col-form-label text-md-end">Phone Number</label>
+            <div class="mb-3 row">
+              <label for="phone_number" class="col-md-4 col-form-label text-md-end">Phone Number</label>
 
-                <div class="col-md-6">
-                  <input value = "<?= $contact["phone_number"] ?>" id="phone_number" type="tel" class="form-control" name="phone_number"
-                    autocomplete="phone_number" autofocus />
-                </div>
+              <div class="col-md-6">
+                <input value="<?= $contact["phone_number"] ?>" id="phone_number" type="tel" class="form-control"
+                  name="phone_number" autocomplete="phone_number" autofocus />
               </div>
+            </div>
 
-              <div class="mb-3 row">
-                <div class="col-md-6 offset-md-4">
-                  <button type="submit" class="btn btn-primary">
-                    Submit
-                  </button>
-                </div>
+            <div class="mb-3 row">
+              <div class="col-md-6 offset-md-4">
+                <button type="submit" class="btn btn-primary">
+                  Submit
+                </button>
               </div>
-            </form>
-          </div>
+            </div>
+          </form>
         </div>
       </div>
     </div>
   </div>
+</div>
 <?php require_once "partials/footer.php" ?>
+

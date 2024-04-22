@@ -10,7 +10,7 @@ if (!isset($_SESSION["user"])) {
   return;
 }
 // $contacts = json_decode(file_get_contents("contacts.json"), $associative = true);
-$contacts = $conn->query("SELECT * FROM contacts")->fetchAll();
+$contacts = $conn->query("SELECT * FROM contacts WHERE user_id = {$_SESSION["user"]["id"]}")->fetchAll();
 
 // este ciclo se usa para mostar los datos extraidos cuando no se usa fetch y entonces es un objeto
 // foreach ($contacts as $key) {

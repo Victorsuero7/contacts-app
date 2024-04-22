@@ -1,3 +1,5 @@
+DROP DATABASE IF EXISTS contacts_app;
+
 CREATE DATABASE contacts_app;
 
 USE contacts_app;
@@ -12,10 +14,10 @@ CREATE TABLE users (
 CREATE TABLE contacts (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(255),
-    phone_number VARCHAR(255)
+    user_id INT NOT NULL,
+    phone_number VARCHAR(255),
+
+    FOREIGN KEY (user_id) REFERENCES users(id)
 );
 
-INSERT INTO contacts (name, phone_number) VALUES ("Jota", "67532");
-INSERT INTO contacts (name, phone_number) VALUES ("Pepe", "1234");
-INSERT INTO contacts (name, phone_number) VALUES ("Vic", "37826");
 -- Dos giones para comentarios

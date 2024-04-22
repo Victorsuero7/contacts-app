@@ -17,9 +17,13 @@ if ($statement->rowCount() == 0) {
   echo("HTTP 404 NOT FOUND");
 }
 
-$statement = $conn->prepare("DELETE FROM contacts WHERE id=:id");
+$statement = $conn->prepare("DELETE FROM contacts WHERE id=:id AND user_id = {$_SESSION["user"]["id"]}");
 // $statement->bindParam(":id", $id);
+$statement->execute([":id"=>$id]);
+if ($statement->rowCount() == 0) {
+  echo("HTTP 404 NOT FOUND");
+}else{
 
 // Array asociativo en execute para pasar los parametros a la consulta
-$statement->execute([":id"=>$id]);
 header("Location: home.php?id=$id");
+}
